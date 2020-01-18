@@ -21,12 +21,29 @@ body {
 		</style>
 		<script>
 		
+function id(name) {
+	return document.getElementById(name);
+}
 
+function host() {
+	id("host").toggleAttribute("hidden");
+	console.log("Host");
+}
+
+function new_host() {
+	let file = id("video_file").files[0];
+	console.log(file.name);
+}
 		
 		</script>
 	</head>
 	<body>
 		<h1>Videosync</h1>
-		<video src=""></video>
+		<div id="video_container"></div>
+		<button onclick="host()">Host session</button>
+		<div id="host" hidden>
+			<p>Upload video file: <input type="file" id="video_file" accept="video/*"></p>
+			<button onclick="new_host()">Submit</button>
+		</div>
 	</body>
 </html>
