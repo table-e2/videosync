@@ -264,12 +264,12 @@ function manageHost(video) {
 
 var timeout;
 function debounceControlRequest(prop, socket, video) {
-	if (fromServer) {
-		fromServer = false;
-		return;
-	}
 	clearTimeout(timeout);
 	timeout = setTimeout(() => {
+		if (fromServer) {
+			fromServer = false;
+			return;
+		}
 		console.log(tokens);
 		let message = {
 			"token": tokens[videoID],
