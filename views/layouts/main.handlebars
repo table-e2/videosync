@@ -217,8 +217,9 @@ function upload() {
 	progress.removeAttribute("hidden");
 }
 
+var socket;
 function manageControls(video) {
-	var socket = new WebSocket(websocketUrl);
+	socket = new WebSocket(websocketUrl);
 	
 	socket.send(JSON.stringify({
 		"type": "start",
