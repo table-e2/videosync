@@ -177,6 +177,7 @@ function upload() {
 	// Grab details from form
 	let file = id("video_file").files[0];
 	let password = id("password").innerText;
+	console.log(file.name);
 
 	let form = new FormData();
 	form.append("file", file);
@@ -205,6 +206,7 @@ function upload() {
 	});
 
 	xhr.open("POST", uploadUrl);
+	xhr.setRequestHeader("Content-Type", "multipart/form-data");
 	// Send request
 	xhr.send(form);
 

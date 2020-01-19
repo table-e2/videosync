@@ -1,6 +1,7 @@
 const express = require('express')
 const mysql = require('mysql')
 const fs = require('fs')
+const multer = require('multer');
 
 const app = express()
 var expressWs = require('express-ws')(app);
@@ -8,6 +9,7 @@ const exphbs = require('express-handlebars');
 const port = 3000
 const VideoSavePath = ''
 app.use(express.json());
+app.use(express.urlencoded({extended: true, limit: "1GB", parameterLimit: "10000000"}))
 
 app.engine('handlebars', exphbs())
 app.set('view engine', 'handlebars')
@@ -37,27 +39,23 @@ app.get('/watch/:videoID', function(a_req, a_resp) {
 
 app.use('/videos', express.static('./videos'))
 
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './videos');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + file.originalname);
+  }
+});
+
+var upload = multer({ storage: storage });
+
 // returns accessToken
-app.post('/Upload', function(a_req, a_resp){
-  console.log('Inside this upload function ')
-    var sessionPword = a_req.params.password;
-    var file = a_req.params.file
-    var lastPeriod = file.name.split('.')
-    var fileType = lastPeriod[lastPeriod.length-1]
-    var sqlQuery = `INSERT INTO atlantic (password, fileEXT) VALUES ('${file}', '${sessionPword}');`
-    con.query(sqlQuery, function(err, resp) {
-      if (err) throw err;
-      console.log(resp);;
-      console.log('successfully posted to database')
-    });
-    if(file != null){
-      fs.writeFile(fileName, fileData,  (error) =>{
-        if (error){
-          throw error;
-        }
-      }
-  )
-}
+app.post('/Upload', upload.single('file'), function(a_req, a_resp){
+  let password = a_req.body.password;
+  let filename = a_req.file.filename;
+  
+  a_resp.redirect('/watch/' + filename);
 })
 
 // request host access  

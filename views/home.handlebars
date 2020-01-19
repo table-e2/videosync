@@ -1,9 +1,12 @@
 <h1>Videosync</h1>
 <div id="video_container"></div>
 <button onclick="host()">Host session</button>
-<div id="host" hidden>
-	<p>Upload video file: <input type="file" id="video_file" accept="video/*"></p>
-	<p>Password for hosts: <input type="password" id="password"></p>
-	<button onclick="upload()">Submit</button>
-	<p id="progress" hidden></p>
-</div>
+<form action="/Upload" id="host" enctype="multipart/form-data", method="POST">
+<p>
+	Video file: <input type="file" name="file" id="file" accept="video/*">
+</p>
+<p>
+	Password: <input type="text" name="password" id="password">
+</p>
+	<button>Submit</button>
+</form>
