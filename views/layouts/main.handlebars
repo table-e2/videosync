@@ -246,7 +246,7 @@ function manageControls(video) {
 		}
 	});
 	
-	if (tokens.hasItem(videoID)) {
+	if (videoID in tokens) {
 		for (let prop of ["play", "pause", "seeked"]) {
 			if (prop === "seeked" && !video.paused) {
 				prop = "play";

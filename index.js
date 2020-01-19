@@ -127,7 +127,7 @@ app.ws('/faucet', function(a_ws, a_req) {
     msg = JSON.parse(msg);
 
     if (msg.type == 'start') {
-        if (openSockets.hasItem(msg.videoID)) {
+        if (msg.videoID in openSockets) {
             openSockets[msg.videoID].append(a_ws)
         } else {
             openSockets[msg.videoID] = [a_ws]
