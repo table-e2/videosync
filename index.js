@@ -129,9 +129,8 @@ app.ws('/faucet', function(a_ws, a_req) {
       "execute_time": Date.now()+100
 
     })
-    for (let socket of openSockets[msg.videoID])
-    openSockets[msg.videoID].forEach(webSocket){
-      a_ws.send(output)
+    for (let socket of openSockets[msg.videoID]) {
+      socket.send(output)
     }
 	})
 
