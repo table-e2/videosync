@@ -85,7 +85,7 @@ app.post('/Upload', upload.single('file'), function(a_req, a_resp) {
 // request host access  
 app.post('/RequestWater', function(a_req, a_resp) {
     console.log("Got request for host");
-    var videoID = a_req.body.videoID.split('.')[0]
+    var videoID = a_req.body.videoID
     var password = a_req.body.password
     //console.log(a_req.);
 
@@ -94,9 +94,11 @@ app.post('/RequestWater', function(a_req, a_resp) {
         if (err) throw err;
         if (result.length > 0) {
             var accessToken = Date.now().toString(16);
+            console.log(accessToken);
             var sqlQuery = `INSERT INTO pacific (videoId, accessToken) VALUES ( '${videoID}', '${accessToken}');`
             con.query(sqlQuery, function(err, result, fields) {
                 if (err) throw err;
+                console.log("made query")
                 a_resp.json({
                     "token": accessToken
                 })
