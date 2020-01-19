@@ -39,11 +39,13 @@ app.get('/', function(a_req, a_resp) {
 
 // Watch page
 // finished \
-app.get('/watch/:videoID', async function(a_req, a_resp) {
-    a_resp.render('watch', {
-        "videoID": a_req.params.videoID,
-        "qrcode": await qrcode.toDataURL(a_req.hostname + a_req.url)
-    })
+app.get('/watch/:videoID', function(a_req, a_resp) {
+    qrcode.toDataURL(a_req.hostname + a_req.url).then((res) =>
+        a_resp.render('watch', {
+            "videoID": a_req.params.videoID,
+            "qrcode": res
+        })
+    )
 })
 
 app.use('/videos', express.static('./videos'))
