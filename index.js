@@ -128,7 +128,7 @@ app.ws('/faucet', function(a_ws, a_req) {
 
     if (msg.type == 'start') {
         if (msg.videoID in openSockets) {
-            openSockets[msg.videoID].append(a_ws)
+            openSockets[msg.videoID].push(a_ws)
         } else {
             openSockets[msg.videoID] = [a_ws]
         }
