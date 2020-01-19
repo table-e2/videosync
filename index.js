@@ -13,8 +13,7 @@ const VideoSavePath = ''
 app.use(express.json());
 app.use(bodyParser.urlencoded({
     extended: true,
-    limit: "1GB",
-    parameterLimit: "10000000"
+    limit: "1GB"
 }))
 
 app.engine('handlebars', exphbs())
@@ -110,15 +109,6 @@ app.post('/RequestWater', function(a_req, a_resp) {
     })
 })
 
-//finished
-app.get('/WaterTowerTime', function(a_req, a_resp) {
-    var resp = {
-        "timeStamp": Date.now()
-    }
-    console.log(resp);
-    a_resp.json(resp)
-})
-
 var openSockets = {};
 
 app.ws('/faucet', function(a_ws, a_req) {
@@ -140,8 +130,7 @@ app.ws('/faucet', function(a_ws, a_req) {
     } else {
         let output = JSON.stringify({
             "type": msg.type,
-            "timeStamp": msg.timeStamp,
-            "execute_time": Date.now() + 100
+            "timeStamp": msg.timeStamp
 
         })
         let toDelete = [];

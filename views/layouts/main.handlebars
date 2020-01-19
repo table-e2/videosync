@@ -29,10 +29,8 @@ video {
 const apiUrl = "";
 const uploadUrl = apiUrl + "/upload";
 const hostUrl = apiUrl + "/RequestWater";
-const timeUrl = apiUrl + "/WaterTowerTime";
 const websocketUrl = "ws://" + window.location.host + "/faucet";
 var tokens = {};
-var timeDifference;
 
 {{#if videoID}}
 const videoID = "{{videoID}}"; 
@@ -138,20 +136,6 @@ function getLocalTokens() {
 	tokens = JSON.parse(docCookies.getItem("tokens")) || {};
 }
 
-// Get server time
-function getTime() {
-	let xhr = new XMLHttpRequest();
-	xhr.addEventListener("load", (event) => {
-		let serverTime = JSON.parse(xhr.response).timeStamp;
-		let localTime = Date.now();
-		timeDifference = localTime - serverTime;
-		console.log(`Server time: ${serverTime}, local time: ${localTime}, difference: ${timeDifference}`);
-	});
-	xhr.open("GET", timeUrl);
-	xhr.send();
-	console.log("Requested server time");
-}
-
 // Show new host controls
 function host() {
 	id("host").toggleAttribute("hidden");
@@ -234,25 +218,12 @@ function manageControls(video) {
         socket.addEventListener("message", (message) => {
 			fromServer = true;
             let data = JSON.parse(message.data);
-            if (data.type === "play") {
-                let adjusted = data.execute_time - timeDifference;
-                let delay = Date.now() - adjusted;
-                console.log(`Adjusted: ${adjusted}, Delay: ${delay}`);
-                if (delay <= 0) {
-                    video.currentTime = data.timeStamp;
-					video.play();
-                } else {
-                    setTimeout(() => {
-                        video.currentTime = data.timeStamp;
-						video.play();
-                    }, delay);
-                }
-            } else {
-				if (data.type === "pause") {
-					video.pause();
-				}
-                video.currentTime = data.timeStamp;
-            }
+			video.currentTime = data.timeStamp;
+			if (data.type === "pause") {
+				video.pause();
+			} else if (data.type === "play") {
+				video.play();
+			}
         });
     });
 }
@@ -295,7 +266,6 @@ function debounceControlRequest(prop, socket, video) {
 }
 
 window.addEventListener("load", () => {
-	getTime();
 	getLocalTokens();
 	
 	{{#if videoID}}
