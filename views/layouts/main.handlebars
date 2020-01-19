@@ -217,52 +217,55 @@ function upload() {
 
 	progress.removeAttribute("hidden");
 }
-
 var socket;
+
 function manageControls(video) {
-	socket = new WebSocket(websocketUrl);
-	socket.addEventListener("open", () => {
-		
-	
-	socket.send(JSON.stringify({
-		"type": "start",
-		"videoID": videoID
-	}));
-	
-	
-	socket.addEventListener("message", (message) => {
-		let data = JSON.parse(message.data);
-		if (data.type === "play") {
-			let adjusted = data.execute_time - timeDifference;
-			let delay = Date.now() - adjusted;
-			console.log(`Adjusted: ${adjusted}, Delay: ${delay}`);
-			if (delay <= 0) {
-				video.currentTime = data.timeStamp;
-			} else {
-				setTimeout(() => {video.currentTime = data.timeStamp}, delay);
-			}
-		} else {
-			video.currentTime = data.timeStamp;
-		}
-	});
-	
-	if (videoID in tokens) {
-		for (let prop of ["play", "pause", "seeked"]) {
-			if (prop === "seeked" && !video.paused) {
-				prop = "play";
-			}
-			video.addEventListener(prop, (event) => {
-				debounceControlRequest(prop, socket, video);
-			});
-		}
-	}
-	});
+    socket = new WebSocket(websocketUrl);
+    socket.addEventListener("open", () => {
+
+
+        socket.send(JSON.stringify({
+            "type": "start",
+            "videoID": videoID
+        }));
+
+
+        socket.addEventListener("message", (message) => {
+            let data = JSON.parse(message.data);
+            if (data.type === "play") {
+                let adjusted = data.execute_time - timeDifference;
+                let delay = Date.now() - adjusted;
+                console.log(`Adjusted: ${adjusted}, Delay: ${delay}`);
+                if (delay <= 0) {
+                    video.currentTime = data.timeStamp;
+                } else {
+                    setTimeout(() => {
+                        video.currentTime = data.timeStamp
+                    }, delay);
+                }
+            } else {
+                video.currentTime = data.timeStamp;
+            }
+        });
+
+        if (videoID in tokens) {
+            for (let prop of ["play", "pause", "seeked"]) {
+                if (prop === "seeked" && !video.paused) {
+                    prop = "play";
+                }
+                video.addEventListener(prop, (event) => {
+                    debounceControlRequest(prop, socket, video);
+                });
+            }
+        }
+    });
 }
 
 var timeout;
 function debounceControlRequest(prop, socket, video) {
 	clearTimeout(timeout);
 	timeout = setTimeout(() => {
+		console.log(tokens);
 		let message = {
 			"token": tokens[videoID],
 			"timeStamp": video.currentTime,
