@@ -21,18 +21,59 @@ body {
 		</style>
 		<script>
 		
+const apiUrl = "/api/v1";
+const uploadUrl = apiUrl + "/upload";
+const hostUrl = apiUrl + "/host";
+const websocketUrl = "wss://" + window.location.host + "/faucet";
+
+// Easier function to get an element
 function id(name) {
 	return document.getElementById(name);
 }
 
+// Show new host controls
 function host() {
 	id("host").toggleAttribute("hidden");
 	console.log("Host");
 }
 
-function new_host() {
+// Create a new session
+function upload() {
+	// Grab details from form
 	let file = id("video_file").files[0];
-	console.log(file.name);
+	let password = id("password").innerText;
+	
+	let form = new FormData();
+	form.append("file", file);
+	form.append("password", password);
+	
+	let progress = id("progress");
+	let xhr = new XMLHttpRequest();
+	
+	// What to do when in progress
+	xhr.upload.addEventListener("progress", (event) => {
+		if (event.lengthComputable) {
+			let percent = event.loaded / event.total;
+			progress.innerText = String(percent) + "%";
+		} else {
+			progress.innerText = "Uploading...";
+		}
+	});
+	
+	// What to do when finished
+	xhr.upload.addEventListener("load", (event) => {
+		console.log("Finished sending");
+		let resp = xhr.response;
+		// TODO: set host token and redirect to url
+	});
+	
+	xhr.open("POST", uploadUrl);
+	// Send request
+	xhr.send(form);
+	
+	console.log("Sent form");
+
+	progress.removeAttribute("hidden");
 }
 		
 		</script>
@@ -43,7 +84,9 @@ function new_host() {
 		<button onclick="host()">Host session</button>
 		<div id="host" hidden>
 			<p>Upload video file: <input type="file" id="video_file" accept="video/*"></p>
-			<button onclick="new_host()">Submit</button>
+			<p>Password for hosts: <input type="text/password" id="password"></p>
+			<button onclick="upload()">Submit</button>
+			<p id="progress" hidden></p>
 		</div>
 	</body>
 </html>
