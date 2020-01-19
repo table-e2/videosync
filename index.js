@@ -17,9 +17,8 @@ app.get('/', function(a_req, a_resp) {
 })
 
 // Watch page
-app.get('/watch/+', function(a_req, a_resp) {
-	console.log(a_req.path)
-	a_resp.render('watch', {"videoID": "abcd"})
+app.get('/watch/:videoID', function(a_req, a_resp) {
+	a_resp.render('watch', {"videoID": a_req.params.videoID})
 })
 
 // returns accessToken
