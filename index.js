@@ -8,7 +8,7 @@ const qrcode = require('qrcode')
 const app = express()
 var expressWs = require('express-ws')(app);
 const exphbs = require('express-handlebars');
-const port = 80
+const port = 3000
 const VideoSavePath = ''
 
 app.use(express.json());
