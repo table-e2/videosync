@@ -235,8 +235,8 @@ function manageHost(video) {
                 prop = "play";
             }
 			if (prop === "play") {
-				video.pause();
-				setTimeout(() => video.play(), 200);
+				video.play();
+				video.currentTime = Math.max(0, video.currentTime - 100);
 			}
             video.addEventListener(prop, (event) => {
                 debounceControlRequest(prop, socket, video);
