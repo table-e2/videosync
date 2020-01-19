@@ -2,11 +2,23 @@ const express = require('express')
 const mysql = require('mysql')
 const fs = require('fs')
 
+var con = mysql.createConnection({
+  host: "35.225.82.255",
+  user: "root",
+  password: "",
+  database: 'Ocean'
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected to DB!");
+});
+
 const app = express()
 var expressWs = require('express-ws')(app);
 const exphbs = require('express-handlebars');
 const port = 3000
-const VideoSavePath = '/ '
+const VideoSavePath = ''
 
 app.engine('handlebars', exphbs())
 app.set('view engine', 'handlebars')
@@ -17,6 +29,7 @@ app.get('/', function(a_req, a_resp) {
 })
 
 // Watch page
+// finished \
 app.get('/watch/:videoID', function(a_req, a_resp) {
 	a_resp.render('watch', {"videoID": a_req.params.videoID})
 })
@@ -25,17 +38,25 @@ app.use('/videos', express.static('./videos'))
 
 // returns accessToken
 app.post('/Upload', function(a_req, a_resp){
+  console.log('Inside this upload function ')
     var sessionPword = a_req.param('password');
-    var fileData = a_req.param('file')
-    var fileName =  Math.random()+ ".mp4"
-    i
-    fs.writeFile(filePath + fileName, fileData,  (error) => {
-    if(error)
-    {
-      throw error;
-      return;
-
-    }})
+    var file = a_req.param('file')
+    var lastPeriod = file.name.split('.')
+    var fileType = lastPeriod[lastPeriod.length-1]
+    var sqlQuery = `INSERT INTO atlantic (password, fileEXT) VALUES ('${file}', '${sessionPword}');`
+    con.query(sqlQuery, function(err, resp) {
+      if (err) throw err;
+      console.log(resp);;
+      console.log('successfully posted to database')
+    });
+    if(file != null){
+      fs.writeFile(fileName, fileData,  (error) =>{
+        if (error){
+          throw error;
+        }
+      }
+  )
+}
 })
 
 
@@ -43,6 +64,7 @@ app.post('/Upload', function(a_req, a_resp){
 app.post('/RequestWater', function(a_req, a_resp){
   var videoId  = a_req.param('videoID')
   var password = a_req.param('password')
+
 
 })
 
