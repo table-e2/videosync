@@ -261,6 +261,10 @@ function manageHost(video) {
             if (prop === "seeked" && !video.paused) {
                 prop = "play";
             }
+			if (prop === "play") {
+				video.pause();
+				setTimeout(() => video.play(), 200);
+			}
             video.addEventListener(prop, (event) => {
                 debounceControlRequest(prop, socket, video);
             });
@@ -281,7 +285,7 @@ function debounceControlRequest(prop, socket, video) {
 		};
 		console.log(message);
 		socket.send(JSON.stringify(message));
-	}, 500);
+	}, 100);
 }
 
 window.addEventListener("load", () => {
