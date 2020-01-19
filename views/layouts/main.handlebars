@@ -221,9 +221,11 @@ function upload() {
 var socket;
 
 function manageControls(video) {
+	if (socket) {
+		socket.close();
+	}
     socket = new WebSocket(websocketUrl);
     socket.addEventListener("open", () => {
-
 
         socket.send(JSON.stringify({
             "type": "start",

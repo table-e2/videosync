@@ -145,6 +145,9 @@ app.ws('/faucet', function(a_ws, a_req) {
 
         })
         for (let socket of openSockets[msg.videoID]) {
+            if (socket === a_ws) {
+                continue;
+            }
             socket.send(output)
         }
     }
