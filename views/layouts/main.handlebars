@@ -246,6 +246,9 @@ function manageControls(video) {
                     }, delay);
                 }
             } else {
+				if (data.type === "pause") {
+					video.paused = true;
+				}
                 video.currentTime = data.timeStamp;
             }
         });
