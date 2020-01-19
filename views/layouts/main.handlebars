@@ -11,7 +11,7 @@
 body {
 	margin: 0;
 	font-family: "Alata", sans-serif;
-	font-size: 2em;
+	font-size: 1.7em;
 	color: #eee;
 	background: #111;
 	display: flex;
@@ -26,17 +26,46 @@ button, input {
 	color: #111;
 	padding: 0.5em 0.7em;
 	font-size: 0.5em;
-	margin: 0.5em;
-	font-weight: bold;
-}
-
-.qrcode {
 	margin: 1em;
+	font-weight: bold;
 }
 
 video {
 	max-width: 100vw;
 	max-height: 100vh;
+	padding-bottom: 1em;
+}
+
+p {
+	max-width: 30em;
+	margin: 0.5em;
+}
+
+a {
+	color: rgb(128, 127, 194);
+	text-decoration: none;
+}
+a:hover {
+	color: rgb(173, 168, 214);
+	text-decoration: underline;
+}
+a:visited {
+	color: rgb(180, 118, 199);
+}
+a:visited:hover {
+	color: rgb(203, 168, 214);
+}
+.form, .qrcode {
+	background-color: #333;
+	border-radius: 20px;
+	padding: 0.8em;
+	margin: 0.5em;
+}
+
+footer {
+	font-size: 0.7em;
+	text-align: center;
+	margin: 2em 0;
 }
 			
 		</style>
@@ -150,12 +179,6 @@ function setToken(t, vid) {
 
 function getLocalTokens() {
 	tokens = JSON.parse(docCookies.getItem("tokens")) || {};
-}
-
-// Show new host controls
-function host() {
-	id("host").toggleAttribute("hidden");
-	console.log("Host");
 }
 
 // Request host
@@ -295,4 +318,8 @@ window.addEventListener("load", () => {
 	<body>
 		{{{body}}}
 	</body>
+	<footer>
+		<p>Created by Team Table E2 at HackDavis 2020 in 24 hours.</p>
+		<p><a target="_blank" rel="noopener noreferrer" href="//github.com/table-e2/videosync">Repository</a></p>
+	</footer>
 </html>

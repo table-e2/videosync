@@ -1,8 +1,10 @@
 <video src="/videos/{{videoID}}" id="video" controls="show" muted></video>
 <button onclick="document.getElementById('becomeHost').toggleAttribute('hidden')">Become host</button>
-<div id="becomeHost" hidden>
-	<p>Password<input type="text" name="password" id="password" onsubmit="requestHost()"></p>
+<div id="becomeHost" hidden class="form">
+	<p>Enter the host key to become a host. You will be able to control the video position for everyone on the same link.</p>
+	<p>Host key: <input type="text" name="password" id="password" onsubmit="requestHost()"></p>
 	<button onclick="requestHost()">Submit</button>
 	<p id="youarehost" hidden>You are host!</p>
 </div>
 <img class="qrcode" src="{{qrcode}}" alt="qrcode">
+<a href="/">Return to homepage</a>
