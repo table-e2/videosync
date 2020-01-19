@@ -309,6 +309,12 @@ window.addEventListener("load", () => {
 	getLocalTokens();
 	
 	{{#if videoID}}
+	id("password").addEventListener("keyup", event => {
+		if (event.key === 'Enter') {
+			requestHost();
+		}
+	});
+	
 	manageControls(id("video"));
 	{{/if}}
 });
