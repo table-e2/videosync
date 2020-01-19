@@ -144,7 +144,7 @@ function getTime() {
 	xhr.addEventListener("load", (event) => {
 		let serverTime = xhr.response.timeStamp;
 		let localTime = Date.now();
-		timeDifference = serverTime - localTime;
+		timeDifference = localTime - serverTime;
 		console.log(`Server time: ${serverTime}, local time: ${localTime}, difference: ${timeDifference}`);
 	});
 	xhr.open("GET", timeUrl);
@@ -221,11 +221,15 @@ function manageControls(video) {
 		let data = JSON.parse(message.data);
 		video.currentTime = data.timeStamp;
 		if (data.type === "play") {
-			
+			data.execute_time;
+			// Todo
 		}
 	});
 	
 	for (let prop of ["play", "pause", "seeked"]) {
+		if (prop === "seeked" && !video.paused) {
+			prop = "play";
+		}
 		video.addEventListener(prop, (event) => {
 			debounceControlRequest(prop, socket, video);
 		});
@@ -237,6 +241,7 @@ function debounceControlRequest(prop, socket, video) {
 	clearTimeout(timeout);
 	timeout = setTimeout(() => {
 		let message = {
+		//	"token": tokens[videoID],
 			"timeStamp": video.currentTime,
 			"type": prop
 		};
