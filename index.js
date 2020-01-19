@@ -21,19 +21,21 @@ app.get('/watch/:videoID', function(a_req, a_resp) {
 	a_resp.render('watch', {"videoID": a_req.params.videoID})
 })
 
+app.use('/videos', express.static('./videos'))
+
 // returns accessToken
 app.post('/Upload', function(a_req, a_resp){
     var sessionPword = a_req.param('password');
     var fileData = a_req.param('file')
     var fileName =  Math.random()+ ".mp4"
     i
-    fs.writeFile(filePath + fileName, fileData,  (error) =>
+    fs.writeFile(filePath + fileName, fileData,  (error) => {
     if(error)
     {
-      return;
       throw error;
+      return;
 
-    })
+    }})
 })
 
 
