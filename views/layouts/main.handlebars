@@ -219,6 +219,7 @@ function upload() {
 	progress.removeAttribute("hidden");
 }
 var socket;
+var fromServer = false;
 
 function manageControls(video) {
     socket = new WebSocket(websocketUrl);
@@ -231,6 +232,7 @@ function manageControls(video) {
 
 
         socket.addEventListener("message", (message) => {
+			fromServer = true;
             let data = JSON.parse(message.data);
             if (data.type === "play") {
                 let adjusted = data.execute_time - timeDifference;
@@ -274,6 +276,10 @@ function manageHost(video) {
 
 var timeout;
 function debounceControlRequest(prop, socket, video) {
+	if (fromServer) {
+		fromServer = false;
+		return;
+	}
 	clearTimeout(timeout);
 	timeout = setTimeout(() => {
 		console.log(tokens);
