@@ -98,7 +98,7 @@ app.post('/RequestWater', function(a_req, a_resp) {
             con.query(sqlQuery, function(err, result, fields) {
                 if (err) throw err;
                 a_resp.json({
-                    "accessToken": accessToken
+                    "token": accessToken
                 })
                 console.log("fields" + fields);
             })
