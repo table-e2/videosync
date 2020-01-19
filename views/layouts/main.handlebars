@@ -160,7 +160,7 @@ function host() {
 
 // Request host
 function requestHost() {
-	let password = id("password");
+	let password = id("password").value;
 
 	let xhr = new XMLHttpRequest();
 	xhr.addEventListener("load", (_event) => console.log("Host request received"));
@@ -168,7 +168,8 @@ function requestHost() {
 		setToken(xhr.response.token);
 	})
 	xhr.open("POST", hostUrl);
-	xhr.send({"password": password, "videoID": videoID});
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.send(JSON.stringify({"password": password, "videoID": videoID}));
 	console.log("Host request sent");
 }
 

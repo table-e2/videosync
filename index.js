@@ -2,14 +2,16 @@ const express = require('express')
 const mysql = require('mysql')
 const fs = require('fs')
 const multer = require('multer');
+const bodyParser = require('body-parser')
 
 const app = express()
 var expressWs = require('express-ws')(app);
 const exphbs = require('express-handlebars');
 const port = 3000
 const VideoSavePath = ''
+
 app.use(express.json());
-app.use(express.urlencoded({
+app.use(bodyParser.urlencoded({
     extended: true,
     limit: "1GB",
     parameterLimit: "10000000"
@@ -82,18 +84,14 @@ app.post('/Upload', upload.single('file'), function(a_req, a_resp) {
 // finished
 // request host access  
 app.post('/RequestWater', function(a_req, a_resp) {
-    console.log(a_req.body)
-    var videoID = a_req.body.videoID
+    console.log("Got request for host");
+    var videoID = a_req.body.videoID.split('.')[0]
     var password = a_req.body.password
     //console.log(a_req.);
 
-    console.log(videoID);
-    console.log(password);
-
-    var sqlQuery = `SELECT * FROM atlantic WHERE videoId = ${videoID} AND password = "${password}";`
+    var sqlQuery = `SELECT * FROM atlantic WHERE videoId = "${videoID}" AND password = "${password}";`
     con.query(sqlQuery, function(err, result) {
         if (err) throw err;
-        console.log(result);
         if (result.length > 0) {
             var accessToken = Date.now().toString(16);
             var sqlQuery = `INSERT INTO pacific (videoId, accessToken) VALUES ( '${videoID}', '${accessToken}');`
