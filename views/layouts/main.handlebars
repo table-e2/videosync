@@ -238,16 +238,16 @@ function manageControls(video) {
                 console.log(`Adjusted: ${adjusted}, Delay: ${delay}`);
                 if (delay <= 0) {
                     video.currentTime = data.timeStamp;
-					video.paused = false;
+					video.play();
                 } else {
                     setTimeout(() => {
                         video.currentTime = data.timeStamp;
-						video.paused = false;
+						video.play();
                     }, delay);
                 }
             } else {
 				if (data.type === "pause") {
-					video.play();
+					video.pause();
 				}
                 video.currentTime = data.timeStamp;
             }
