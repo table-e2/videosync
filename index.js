@@ -140,10 +140,10 @@ app.ws('/faucet', function(a_ws, a_req) {
         let toDelete = [];
         let theseSockets = openSockets[msg.videoID];
         for (let socket of theseSockets) {
-            if (socket === a_ws) {
-                console.log("Skipping host")
-                continue;
-            }
+            // if (socket === a_ws) {
+            //     console.log("Skipping host")
+            //     continue;
+            // }
             try {
                 socket.send(output);
             } catch (e) {
