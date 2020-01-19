@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const app = express()
 var expressWs = require('express-ws')(app);
 const exphbs = require('express-handlebars');
-const port = 3000
+const port = 80
 const VideoSavePath = ''
 
 app.use(express.json());
