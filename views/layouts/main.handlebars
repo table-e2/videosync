@@ -168,7 +168,7 @@ function requestHost() {
 		let response = JSON.parse(xhr.response);
 		console.log(response);
 		setToken(response.token, videoID);
-		manageControls(id("video"));
+		manageHost(id("video"));
 	})
 	xhr.open("POST", hostUrl);
 	xhr.setRequestHeader("Content-Type", "application/json");
@@ -221,9 +221,6 @@ function upload() {
 var socket;
 
 function manageControls(video) {
-	if (socket) {
-		socket.close();
-	}
     socket = new WebSocket(websocketUrl);
     socket.addEventListener("open", () => {
 
@@ -250,18 +247,20 @@ function manageControls(video) {
                 video.currentTime = data.timeStamp;
             }
         });
-
-        if (videoID in tokens) {
-            for (let prop of ["play", "pause", "seeked"]) {
-                if (prop === "seeked" && !video.paused) {
-                    prop = "play";
-                }
-                video.addEventListener(prop, (event) => {
-                    debounceControlRequest(prop, socket, video);
-                });
-            }
-        }
     });
+}
+
+function manageHost(video) {
+    if (videoID in tokens) {
+        for (let prop of ["play", "pause", "seeked"]) {
+            if (prop === "seeked" && !video.paused) {
+                prop = "play";
+            }
+            video.addEventListener(prop, (event) => {
+                debounceControlRequest(prop, socket, video);
+            });
+        }
+    }
 }
 
 var timeout;
