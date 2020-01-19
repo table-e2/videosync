@@ -24,17 +24,52 @@ body {
 const apiUrl = "/api/v1";
 const uploadUrl = apiUrl + "/upload";
 const hostUrl = apiUrl + "/host";
+const timeUrl = apiUrl + "/WaterTowerTime";
 const websocketUrl = "wss://" + window.location.host + "/faucet";
+var token;
+var timeDifference;
+
+{{#if videoID}}
+const videoID = {{videoID}};
+{{/if}}
 
 // Easier function to get an element
 function id(name) {
 	return document.getElementById(name);
 }
 
+// Get server time
+function getTime() {
+	let xhr = new XMLHttpRequest();
+	xhr.addEventListener("load", (event) => {
+		let serverTime = xhr.response.timeStamp;
+		let localTime = Date.now();
+		timeDifference = serverTime - localTime;
+		console.log(`Server time: ${serverTime}, local time: ${localTime}, difference: ${timeDifference}`);
+	});
+	xhr.open("GET", timeUrl);
+	xhr.send();
+	console.log("Requested server time");
+}
+
 // Show new host controls
 function host() {
 	id("host").toggleAttribute("hidden");
 	console.log("Host");
+}
+
+// Request host
+function requestHost() {
+	let password = id("password");
+	
+	let xhr = new XMLHttpRequest();
+	xhr.addEventListener("load", (_event) => console.log("Host request received"));
+	xhr.addEventListener("load", (event) => {
+		token = xhr.response.token;
+	})
+	xhr.open("POST", hostUrl);
+	xhr.send(password);
+	console.log("Host request sent");
 }
 
 // Create a new session
@@ -54,7 +89,7 @@ function upload() {
 	xhr.upload.addEventListener("progress", (event) => {
 		if (event.lengthComputable) {
 			let percent = event.loaded / event.total;
-			progress.innerText = String(percent) + "%";
+			progress.innerText = String(Math.floor(percent * 100)) + "%";
 		} else {
 			progress.innerText = "Uploading...";
 		}
@@ -63,7 +98,7 @@ function upload() {
 	// What to do when finished
 	xhr.upload.addEventListener("load", (event) => {
 		console.log("Finished sending");
-		let resp = xhr.response;
+		token = xhr.response.token;
 		// TODO: set host token and redirect to url
 	});
 	
@@ -75,7 +110,11 @@ function upload() {
 
 	progress.removeAttribute("hidden");
 }
-		
+
+window.addEventListener("load", () => {
+	getTime();
+});
+	
 		</script>
 	</head>
 	<body>

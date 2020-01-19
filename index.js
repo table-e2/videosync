@@ -13,13 +13,12 @@ app.get('/', function(a_req, a_resp) {
 })
 
 // Watch page
-app.get('/watch/\d+', function(a_req, a_resp) {
-	console.log(a_req.path)
-	a_resp.render('watch', {"videoID": "abcd"})
+app.get('/watch/:videoID', function(a_req, a_resp) {
+	a_resp.render('watch', {"videoID": a_req.params.videoID})
 })
 
 // returns accessToken
-app.post('/Upload', function(a_req, a_resp)){
+app.post('/Upload', function(a_req, a_resp){
     var sessionPword = a_req.param('password');
     //todo: add file
 
@@ -34,8 +33,8 @@ app.post('/RequestWater', function(a_req, a_resp){
 
 })
 
-app.get('/WaterTowerTime', function(a_req, a_resp)){
-  constant resp = {"Status":"Success", "Result":{"timeStamp": Date.now()}}
+app.get('/WaterTowerTime', function(a_req, a_resp){
+  const resp = {"Status":"Success", "Result":{"timeStamp": Date.now()}}
   response.json(resp)
 
 })
