@@ -270,7 +270,8 @@ function debounceControlRequest(prop, socket, video) {
 		let message = {
 			"token": tokens[videoID],
 			"timeStamp": video.currentTime,
-			"type": prop
+			"type": prop,
+			"videoID": videoID
 		};
 		console.log(message);
 		socket.send(JSON.stringify(message));
