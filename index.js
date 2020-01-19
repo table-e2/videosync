@@ -124,7 +124,7 @@ var openSockets = {};
 app.ws('/faucet', function(a_ws, a_req) {
 
   a_ws.on('message', function(msg) {
-
+    console.log(msg)
 
     if (msg.type == 'start') {
         if (openSockets.hasItem(msg.videoID)) {
