@@ -66,7 +66,8 @@ var upload = multer({ storage: storage });
 app.post('/Upload', upload.single('file'), function(a_req, a_resp){
   let password = a_req.body.password;
   let filename = a_req.file.filename;
-  
+  var sqlQuery    = `INSERT INTO atlantic (videoId, password) VALUES ( '${filename}', '${password}');`
+  con.query(sqlQuery, function(err, result){})
   a_resp.redirect('/watch/' + filename);
 })
 
@@ -107,34 +108,35 @@ app.get('/WaterTowerTime', function(a_req, a_resp){
   a_resp.json(resp)
 })
 
+var openSockets = {};
 
 app.ws('/faucet', function(a_ws, a_req) {
-	a_ws.on('command', function(msg) {
-    switch (command) {
-      case 'play':
-        //send play command to clients
-        // find the client with the highest ping and set the start delay accordingly
-        
-      break;
-      case 'pause':
-        //send pause command to clients
-      break;
-      case 'forwardSeek':
-        //send forward seek to other clients
-      break;
-      case 'backwardSeek':
-        // send backwardSeek to clients
-      break;
-      default:
+
+	a_ws.on('message', function(msg) {
 
 
+    if(msg.type == 'start'){
+      if (openSockets.hasItem(msg.videoID)) {
+        openSockets[msg.videoID].append(a_ws)
+      } else {
+        openSockets[msg.videoID] = [a_ws]
+      }
     }
+    else{
+      let output = JSON.stringify({
+      "type":msg.type,
+      "timeStamp":msg.timeStamp,
+      "execute_time": Date.now()+100
 
-    a_ws.send(msg)
-
-
+    })
+    for (let socket of openSockets[msg.videoID])
+    openSockets[msg.videoID].forEach(webSocket){
+      a_ws.send(output)
+    }
 	})
 
 })
+
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
