@@ -165,8 +165,9 @@ function requestHost() {
 	let xhr = new XMLHttpRequest();
 	xhr.addEventListener("load", (_event) => console.log("Host request received"));
 	xhr.addEventListener("load", (event) => {
-		console.log(typeof xhr.response);
-		setToken(xhr.response.token, videoID);
+		let response = JSON.parse(xhr.response);
+		console.log(response);
+		setToken(response.token, videoID);
 		manageControls(id("video"));
 	})
 	xhr.open("POST", hostUrl);
