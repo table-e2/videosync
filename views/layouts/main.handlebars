@@ -142,7 +142,7 @@ function getLocalTokens() {
 function getTime() {
 	let xhr = new XMLHttpRequest();
 	xhr.addEventListener("load", (event) => {
-		let serverTime = xhr.response.timeStamp;
+		let serverTime = JSON.parse(xhr.response).timeStamp;
 		let localTime = Date.now();
 		timeDifference = localTime - serverTime;
 		console.log(`Server time: ${serverTime}, local time: ${localTime}, difference: ${timeDifference}`);
@@ -216,40 +216,53 @@ function upload() {
 }
 
 function manageControls(video) {
+	socket.send(JSON.stringify({
+		"type": "start",
+		"videoID": videoID
+	}));
 	
 	var socket = new WebSocket(websocketUrl);
 	
 	socket.addEventListener("message", (message) => {
 		let data = JSON.parse(message.data);
-		video.currentTime = data.timeStamp;
 		if (data.type === "play") {
-			data.execute_time;
-			// Todo
+			let adjusted = data.execute_time - timeDifference;
+			let delay = Date.now() - adjusted;
+			console.log(`Adjusted: ${adjusted}, Delay: ${delay}`);
+			if (delay <= 0) {
+				video.currentTime = data.timeStamp;
+			} else {
+				setTimeout(() => {video.currentTime = data.timeStamp}, delay);
+			}
+		} else {
+			video.currentTime = data.timeStamp;
 		}
 	});
 	
-	for (let prop of ["play", "pause", "seeked"]) {
-		if (prop === "seeked" && !video.paused) {
-			prop = "play";
+	if (tokens.hasItem(videoID)) {
+		for (let prop of ["play", "pause", "seeked"]) {
+			if (prop === "seeked" && !video.paused) {
+				prop = "play";
+			}
+			video.addEventListener(prop, (event) => {
+				debounceControlRequest(prop, socket, video);
+			});
 		}
-		video.addEventListener(prop, (event) => {
-			debounceControlRequest(prop, socket, video);
-		});
 	}
 }
 
+var timeout;
 function debounceControlRequest(prop, socket, video) {
-	var timeout;
 	clearTimeout(timeout);
 	timeout = setTimeout(() => {
 		let message = {
-		//	"token": tokens[videoID],
+			"token": tokens[videoID],
 			"timeStamp": video.currentTime,
 			"type": prop
 		};
 		console.log(message);
 		socket.send(JSON.stringify(message));
-	}, 10);
+	}, 500);
 }
 
 window.addEventListener("load", () => {

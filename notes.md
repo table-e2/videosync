@@ -30,8 +30,9 @@ reply:
 
 ```json
 {
-    "type": "seek|play|pause",
-    "video_timestamp": 1234,
+    "type": "seek|play|pause|start",
+    "videoID": "lalalalalala",
+    "timeStamp": 1234,
     "execute_time": 4567,
     "token": "abcd1234",
     "server_time": 7549785
