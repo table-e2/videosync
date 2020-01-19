@@ -148,6 +148,7 @@ app.ws('/faucet', function(a_ws, a_req) {
         let theseSockets = openSockets[msg.videoID];
         for (let socket of theseSockets) {
             if (socket === a_ws) {
+                console.log("Skipping host")
                 continue;
             }
             try {
