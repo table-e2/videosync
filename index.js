@@ -8,7 +8,7 @@ const qrcode = require('qrcode')
 const app = express()
 var expressWs = require('express-ws')(app);
 const exphbs = require('express-handlebars');
-const port = 3000
+const port = 80
 const VideoSavePath = ''
 
 app.use(express.json());
@@ -37,6 +37,10 @@ app.get('/', function(a_req, a_resp) {
     a_resp.render('home')
 })
 
+app.get('/favicon.ico', function(a_req, a_resp) {
+    a_resp.sendFile("favicon.ico", {root: "."})
+})
+
 // Watch page
 // finished \
 app.get('/watch/:videoID', function(a_req, a_resp) {
@@ -49,9 +53,6 @@ app.get('/watch/:videoID', function(a_req, a_resp) {
 })
 
 app.use('/videos', express.static('./videos'))
-app.get('/favicon.ico', function(a_req, a_resp) {
-    a_resp.sendFile("favicon.ico", {root: "."})
-})
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
