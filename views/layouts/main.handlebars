@@ -218,12 +218,13 @@ function upload() {
 }
 
 function manageControls(video) {
+	var socket = new WebSocket(websocketUrl);
+	
 	socket.send(JSON.stringify({
 		"type": "start",
 		"videoID": videoID
 	}));
 	
-	var socket = new WebSocket(websocketUrl);
 	
 	socket.addEventListener("message", (message) => {
 		let data = JSON.parse(message.data);
