@@ -31,7 +31,7 @@ const uploadUrl = apiUrl + "/upload";
 const hostUrl = apiUrl + "/RequestWater";
 const timeUrl = apiUrl + "/WaterTowerTime";
 const websocketUrl = "ws://" + window.location.host + "/faucet";
-var tokens = {};
+var tokens;
 var timeDifference;
 
 {{#if videoID}}
@@ -135,7 +135,7 @@ function setToken(t, vid) {
 }
 
 function getLocalTokens() {
-	tokens = JSON.parse(docCookies.getItem("tokens"));
+	tokens = JSON.parse(docCookies.getItem("tokens")) || {};
 }
 
 // Get server time
