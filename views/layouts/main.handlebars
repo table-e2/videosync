@@ -17,25 +17,125 @@ body {
 	align-items: center;
 	min-height: 100vh;
 }
+
+video {
+	max-width: 100vw;
+	max-height: 100vh;
+}
 			
 		</style>
 		<script>
 		
-const apiUrl = "/api/v1";
+const apiUrl = "";
 const uploadUrl = apiUrl + "/upload";
 const hostUrl = apiUrl + "/host";
 const timeUrl = apiUrl + "/WaterTowerTime";
 const websocketUrl = "wss://" + window.location.host + "/faucet";
-var token;
+var tokens = {};
 var timeDifference;
 
 {{#if videoID}}
-const videoID = {{videoID}};
+const videoID = "{{videoID}}"; 
 {{/if}}
 
 // Easier function to get an element
 function id(name) {
 	return document.getElementById(name);
+}
+
+// Cookie framework from MDN
+var docCookies = {
+
+	// Cookie framework from MDN
+	/*\
+	|*|
+	|*|  :: cookies.js ::
+	|*|
+	|*|  A complete cookies reader/writer framework with full unicode support.
+	|*|
+	|*|  Revision #3 - July 13th, 2017
+	|*|
+	|*|  https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+	|*|  https://developer.mozilla.org/User:fusionchess
+	|*|  https://github.com/madmurphy/cookies.js
+	|*|
+	|*|  This framework is released under the GNU Public License, version 3 or later.
+	|*|  http://www.gnu.org/licenses/gpl-3.0-standalone.html
+	|*|
+	|*|  Syntaxes:
+	|*|
+	|*|  * docCookies.setItem(name, value[, end[, path[, domain[, secure]]]])
+	|*|  * docCookies.getItem(name)
+	|*|  * docCookies.removeItem(name[, path[, domain]])
+	|*|  * docCookies.hasItem(name)
+	|*|  * docCookies.keys()
+	|*|
+	\*/
+	getItem: function(sKey) {
+		if (!sKey) {
+			return null;
+		}
+		return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+	},
+	setItem: function(sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+		if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
+			return false;
+		}
+		var sExpires = "";
+		if (vEnd) {
+			switch (vEnd.constructor) {
+				case Number:
+					sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+					/*
+					Note: Despite officially defined in RFC 6265, the use of `max-age` is not compatible with any
+					version of Internet Explorer, Edge and some mobile browsers. Therefore passing a number to
+					the end parameter might not work as expected. A possible solution might be to convert the the
+					relative time to an absolute time. For instance, replacing the previous line with:
+					*/
+					/*
+					sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; expires=" + (new Date(vEnd * 1e3 + Date.now())).toUTCString();
+					*/
+					break;
+				case String:
+					sExpires = "; expires=" + vEnd;
+					break;
+				case Date:
+					sExpires = "; expires=" + vEnd.toUTCString();
+					break;
+			}
+		}
+		document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+		return true;
+	},
+	removeItem: function(sKey, sPath, sDomain) {
+		if (!this.hasItem(sKey)) {
+			return false;
+		}
+		document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "");
+		return true;
+	},
+	hasItem: function(sKey) {
+		if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
+			return false;
+		}
+		return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+	},
+	keys: function() {
+		var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+		for (var nLen = aKeys.length, nIdx = 0; nIdx < nLen; nIdx++) {
+			aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
+		}
+		return aKeys;
+	}
+};
+
+function setToken(t, vid) {
+	tokens[vid] = t;
+	docCookies.setItem("tokens", JSON.stringify(tokens));
+}
+
+function getLocalTokens() {
+	tokens = JSON.parse(docCookies.getItem("tokens"));
 }
 
 // Get server time
@@ -44,7 +144,7 @@ function getTime() {
 	xhr.addEventListener("load", (event) => {
 		let serverTime = xhr.response.timeStamp;
 		let localTime = Date.now();
-		timeDifference = serverTime - localTime;
+		timeDifference = localTime - serverTime;
 		console.log(`Server time: ${serverTime}, local time: ${localTime}, difference: ${timeDifference}`);
 	});
 	xhr.open("GET", timeUrl);
@@ -61,11 +161,11 @@ function host() {
 // Request host
 function requestHost() {
 	let password = id("password");
-	
+
 	let xhr = new XMLHttpRequest();
 	xhr.addEventListener("load", (_event) => console.log("Host request received"));
 	xhr.addEventListener("load", (event) => {
-		token = xhr.response.token;
+		setToken(xhr.response.token);
 	})
 	xhr.open("POST", hostUrl);
 	xhr.send(password);
@@ -77,14 +177,14 @@ function upload() {
 	// Grab details from form
 	let file = id("video_file").files[0];
 	let password = id("password").innerText;
-	
+
 	let form = new FormData();
 	form.append("file", file);
 	form.append("password", password);
-	
+
 	let progress = id("progress");
 	let xhr = new XMLHttpRequest();
-	
+
 	// What to do when in progress
 	xhr.upload.addEventListener("progress", (event) => {
 		if (event.lengthComputable) {
@@ -94,25 +194,69 @@ function upload() {
 			progress.innerText = "Uploading...";
 		}
 	});
-	
+
 	// What to do when finished
 	xhr.upload.addEventListener("load", (event) => {
 		console.log("Finished sending");
-		token = xhr.response.token;
-		// TODO: set host token and redirect to url
+		setToken(xhr.response.token, xhr.response.videoID);
+		let newUrl = window.location.origin + '/watch/' + xhr.response.videoID;
+		// redirect to url
+		window.location = newUrl;
 	});
-	
+
 	xhr.open("POST", uploadUrl);
 	// Send request
 	xhr.send(form);
-	
+
 	console.log("Sent form");
 
 	progress.removeAttribute("hidden");
 }
 
+function manageControls(video) {
+	
+	var socket = new WebSocket(websocketUrl);
+	
+	socket.addEventListener("message", (message) => {
+		let data = JSON.parse(message.data);
+		video.currentTime = data.timeStamp;
+		if (data.type === "play") {
+			data.execute_time;
+			// Todo
+		}
+	});
+	
+	for (let prop of ["play", "pause", "seeked"]) {
+		if (prop === "seeked" && !video.paused) {
+			prop = "play";
+		}
+		video.addEventListener(prop, (event) => {
+			debounceControlRequest(prop, socket, video);
+		});
+	}
+}
+
+function debounceControlRequest(prop, socket, video) {
+	var timeout;
+	clearTimeout(timeout);
+	timeout = setTimeout(() => {
+		let message = {
+		//	"token": tokens[videoID],
+			"timeStamp": video.currentTime,
+			"type": prop
+		};
+		console.log(message);
+		socket.send(JSON.stringify(message));
+	}, 10);
+}
+
 window.addEventListener("load", () => {
 	getTime();
+	getLocalTokens();
+	
+	{{#if videoID}}
+	manageControls(id("video"));
+	{{/if}}
 });
 	
 		</script>

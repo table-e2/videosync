@@ -34,6 +34,8 @@ app.get('/watch/:videoID', function(a_req, a_resp) {
 	a_resp.render('watch', {"videoID": a_req.params.videoID})
 })
 
+app.use('/videos', express.static('./videos'))
+
 // returns accessToken
 app.post('/Upload', function(a_req, a_resp){
   console.log('Inside this upload function ')
