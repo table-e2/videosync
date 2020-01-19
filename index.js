@@ -49,6 +49,9 @@ app.get('/watch/:videoID', function(a_req, a_resp) {
 })
 
 app.use('/videos', express.static('./videos'))
+app.get('/favicon.ico', function(a_req, a_resp) {
+    a_resp.sendFile("favicon.ico", {root: "."})
+})
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
