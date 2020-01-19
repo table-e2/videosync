@@ -5,17 +5,33 @@
 		<title>Videosync</title>
 		<meta name="description" content="🚿">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://fonts.googleapis.com/css?family=Alata&display=swap" rel="stylesheet"> 
 		<style>
 			
 body {
 	margin: 0;
-	font-family: monospace;
+	font-family: "Alata", sans-serif;
+	font-size: 2em;
 	color: #eee;
 	background: #111;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	min-height: 100vh;
+}
+
+button, input {
+	border-radius: 5px;
+	background-color: #eee;
+	color: #111;
+	padding: 0.5em 0.7em;
+	font-size: 0.5em;
+	margin: 0.5em;
+	font-weight: bold;
+}
+
+.qrcode {
+	margin: 1em;
 }
 
 video {
@@ -153,6 +169,7 @@ function requestHost() {
 		console.log(response);
 		setToken(response.token, videoID);
 		manageHost(id("video"));
+		id("youarehost").removeAttribute("hidden");
 	})
 	xhr.open("POST", hostUrl);
 	xhr.setRequestHeader("Content-Type", "application/json");
