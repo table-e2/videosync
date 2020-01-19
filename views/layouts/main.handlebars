@@ -247,7 +247,7 @@ function manageControls(video) {
                 }
             } else {
 				if (data.type === "pause") {
-					video.paused = true;
+					video.play();
 				}
                 video.currentTime = data.timeStamp;
             }
