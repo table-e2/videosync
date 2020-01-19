@@ -2,6 +2,16 @@ const express = require('express')
 const mysql = require('mysql')
 const fs = require('fs')
 
+const app = express()
+var expressWs = require('express-ws')(app);
+const exphbs = require('express-handlebars');
+const port = 3000
+const VideoSavePath = ''
+app.use(express.json());
+
+app.engine('handlebars', exphbs())
+app.set('view engine', 'handlebars')
+
 var con = mysql.createConnection({
   host: "35.225.82.255",
   user: "root",
@@ -13,15 +23,6 @@ con.connect(function(err) {
   if (err) throw err;
   console.log("Connected to DB!");
 });
-
-const app = express()
-var expressWs = require('express-ws')(app);
-const exphbs = require('express-handlebars');
-const port = 3000
-const VideoSavePath = ''
-
-app.engine('handlebars', exphbs())
-app.set('view engine', 'handlebars')
 
 // Homepage
 app.get('/', function(a_req, a_resp) {
@@ -59,25 +60,21 @@ app.post('/Upload', function(a_req, a_resp){
 }
 })
 
-
 // request host access  
 app.post('/RequestWater', function(a_req, a_resp){
-  var videoId  = a_req.params.videoID
-  var password = a_req.params.password
+  console.log(a_req.body)
+  var videoID  = a_req.body.videoID
+  var password = a_req.body.password
   //console.log(a_req.);
 
   console.log(videoID);
   console.log(password);
 
-  var sqlQuery = `SELECT * FROM atlantic WHERE 'videoId' = ${videoId} & 'password' = ${password};`
+  var sqlQuery = `SELECT * FROM atlantic WHERE videoId = ${videoID} AND password = "${password}";`
   con.query(sqlQuery, function(err, result){
     if (err) throw err;
     console.log(result);
   })
-
-
-
-
 })
 
 app.get('/WaterTowerTime', function(a_req, a_resp){
