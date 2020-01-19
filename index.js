@@ -3,6 +3,7 @@ const mysql = require('mysql')
 const fs = require('fs')
 const multer = require('multer');
 const bodyParser = require('body-parser')
+const qrcode = require('qrcode')
 
 const app = express()
 var expressWs = require('express-ws')(app);
@@ -38,9 +39,10 @@ app.get('/', function(a_req, a_resp) {
 
 // Watch page
 // finished \
-app.get('/watch/:videoID', function(a_req, a_resp) {
+app.get('/watch/:videoID', async function(a_req, a_resp) {
     a_resp.render('watch', {
-        "videoID": a_req.params.videoID
+        "videoID": a_req.params.videoID,
+        "qrcode": await qrcode.toDataURL(a_req.hostname + a_req.url)
     })
 })
 
