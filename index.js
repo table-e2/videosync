@@ -144,11 +144,20 @@ app.ws('/faucet', function(a_ws, a_req) {
             "execute_time": Date.now() + 100
 
         })
-        for (let socket of openSockets[msg.videoID]) {
+        let toDelete = [];
+        let theseSockets = openSockets[msg.videoID];
+        for (let socket of theseSockets) {
             if (socket === a_ws) {
                 continue;
             }
-            socket.send(output)
+            try {
+                socket.send(output);
+            } catch (e) {
+                toDelete.push(socket);
+            }
+        }
+        for (let socket of toDelete) {
+            theseSockets.splice(theseSockets.indexOf(socket), 1);
         }
     }
 
