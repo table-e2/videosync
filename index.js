@@ -124,17 +124,15 @@ var openSockets = {};
 app.ws('/faucet', function(a_ws, a_req) {
 
   a_ws.on('message', function(msg) {
-    console.log(msg, msg.type, msg.videoID)
+    msg = JSON.parse(msg);
 
     if (msg.type == 'start') {
-        console.log("A start")
         if (openSockets.hasItem(msg.videoID)) {
             openSockets[msg.videoID].append(a_ws)
         } else {
             openSockets[msg.videoID] = [a_ws]
         }
     } else {
-        console.log("Not a start")
         let output = JSON.stringify({
             "type": msg.type,
             "timeStamp": msg.timeStamp,
