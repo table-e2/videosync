@@ -24,6 +24,9 @@ Functions:
 
 Structure
 
+
+reply:
+
 ```json
 {
     "type": "seek|play|pause",
