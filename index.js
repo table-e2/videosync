@@ -37,8 +37,8 @@ app.get('/watch/:videoID', function(a_req, a_resp) {
 // returns accessToken
 app.post('/Upload', function(a_req, a_resp){
   console.log('Inside this upload function ')
-    var sessionPword = a_req.param('password');
-    var file = a_req.param('file')
+    var sessionPword = a_req.params.password;
+    var file = a_req.params.file
     var lastPeriod = file.name.split('.')
     var fileType = lastPeriod[lastPeriod.length-1]
     var sqlQuery = `INSERT INTO atlantic (password, fileEXT) VALUES ('${file}', '${sessionPword}');`
@@ -60,8 +60,20 @@ app.post('/Upload', function(a_req, a_resp){
 
 // request host access  
 app.post('/RequestWater', function(a_req, a_resp){
-  var videoId  = a_req.param('videoID')
-  var password = a_req.param('password')
+  var videoId  = a_req.params.videoID
+  var password = a_req.params.password
+  //console.log(a_req.);
+
+  console.log(videoID);
+  console.log(password);
+
+  var sqlQuery = `SELECT * FROM atlantic WHERE 'videoId' = ${videoId} & 'password' = ${password};`
+  con.query(sqlQuery, function(err, result){
+    if (err) throw err;
+    console.log(result);
+  })
+
+
 
 
 })
