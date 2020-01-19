@@ -58,6 +58,7 @@ app.post('/Upload', upload.single('file'), function(a_req, a_resp){
   a_resp.redirect('/watch/' + filename);
 })
 
+// finished
 // request host access  
 app.post('/RequestWater', function(a_req, a_resp){
   console.log(a_req.body)
@@ -72,21 +73,56 @@ app.post('/RequestWater', function(a_req, a_resp){
   con.query(sqlQuery, function(err, result){
     if (err) throw err;
     console.log(result);
+    if (result.length > 0) {
+      var accessToken = Date.now().toString(16);
+      var sqlQuery    = `INSERT INTO pacific (videoId, accessToken) VALUES ( '${videoID}', '${accessToken}');`
+      con.query(sqlQuery, function(err, result, fields){
+        if(err) throw err;
+        a_resp.json({"accessToken":accessToken})
+        console.log("fields" + fields);
+      })
+    }
+    else {
+      a_resp.status(403).end()
+    }
   })
 })
 
+//finished
 app.get('/WaterTowerTime', function(a_req, a_resp){
   var resp = {"timeStamp": Date.now()}
   console.log(resp);
   a_resp.json(resp)
 })
 
-//
-app.ws('/faucet', function(a_ws, a_req) {
-	ws.on('message', function(msg) {
 
-		ws.send(msg);
-	});
-});
+app.ws('/faucet', function(a_ws, a_req) {
+	a_ws.on('command', function(msg) {
+    switch (command) {
+      case 'play':
+        //send play command to clients
+        // find the client with the highest ping and set the start delay accordingly
+        
+      break;
+      case 'pause':
+        //send pause command to clients
+      break;
+      case 'forwardSeek':
+        //send forward seek to other clients
+      break;
+      case 'backwardSeek':
+        // send backwardSeek to clients
+      break;
+      default:
+
+
+    }
+
+    a_ws.send(msg)
+
+
+	})
+
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
