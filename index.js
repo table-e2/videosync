@@ -44,9 +44,21 @@ var storage = multer.diskStorage({
     cb(null, './videos');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
+    let splitted = file.originalname.split('.');
+    let extension = splitted[splitted.length - 1];
+    cb(null, generateName(32) + '.' + extension);
   }
 });
+
+function generateName(length) {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 var upload = multer({ storage: storage });
 
