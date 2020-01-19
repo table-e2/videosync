@@ -238,9 +238,11 @@ function manageControls(video) {
                 console.log(`Adjusted: ${adjusted}, Delay: ${delay}`);
                 if (delay <= 0) {
                     video.currentTime = data.timeStamp;
+					video.paused = false;
                 } else {
                     setTimeout(() => {
-                        video.currentTime = data.timeStamp
+                        video.currentTime = data.timeStamp;
+						video.paused = false;
                     }, delay);
                 }
             } else {
