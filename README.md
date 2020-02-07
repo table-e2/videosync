@@ -1,4 +1,6 @@
-# KitchenSync
+# KitchenSync | local-only branch
+
+**This branch can be used locally without a database. It gives everyone control over the video.**
 
 Created for HackDavis 2020 in 24 hours.
 
