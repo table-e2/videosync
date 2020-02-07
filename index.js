@@ -127,13 +127,13 @@ app.ws('/faucet', function(a_ws, a_req) {
 
     if (msg.type == 'start') {
         if (msg.videoID in openSockets) {
-            console.log("Append", openSockets)
+            console.log("Append", msg.videoID)
             openSockets[msg.videoID].push(a_ws)
-            console.log("Append", openSockets)
+            // console.log("Append")
         } else {
-            console.log("Init", openSockets)
+            console.log("Init", msg.videoID)
             openSockets[msg.videoID] = [a_ws]
-            console.log("Init", openSockets)
+            // console.log("Init")
         }
     } else {
         let output = JSON.stringify({
