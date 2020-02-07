@@ -187,7 +187,7 @@ function setToken(t, vid) {
 function getLocalTokens() {
 	tokens = JSON.parse(docCookies.getItem("tokens")) || {};
 }
-
+{{!-- 
 // Request host
 function requestHost() {
 	let password = id("password").value;
@@ -205,7 +205,7 @@ function requestHost() {
 	xhr.setRequestHeader("Content-Type", "application/json");
 	xhr.send(JSON.stringify({"password": password, "videoID": videoID}));
 	console.log("Host request sent");
-}
+} --}}
 
 // Create a new session
 function upload() {
@@ -276,7 +276,7 @@ function manageControls(video) {
 }
 
 function manageHost(video) {
-    if (videoID in tokens) {
+    {{!-- if (videoID in tokens) { --}}
         for (let prop of ["play", "pause", "seeked"]) {
             if (prop === "seeked" && !video.paused) {
                 prop = "play";
@@ -289,7 +289,7 @@ function manageHost(video) {
                 debounceControlRequest(prop, socket, video);
             });
         }
-    }
+    {{!-- } --}}
 }
 
 var timeout;
@@ -302,7 +302,7 @@ function debounceControlRequest(prop, socket, video) {
 		}
 		console.log(tokens);
 		let message = {
-			"token": tokens[videoID],
+			{{!-- "token": tokens[videoID], --}}
 			"timeStamp": video.currentTime,
 			"type": prop,
 			"videoID": videoID
@@ -316,13 +316,15 @@ window.addEventListener("load", () => {
 	getLocalTokens();
 	
 	{{#if videoID}}
-	id("password").addEventListener("keyup", event => {
+	{{!-- id("password").addEventListener("keyup", event => {
 		if (event.key === 'Enter') {
 			requestHost();
 		}
-	});
+	}); --}}
 	
 	manageControls(id("video"));
+	
+	manageHost(id("video"));
 	{{/if}}
 });
 	
@@ -331,8 +333,8 @@ window.addEventListener("load", () => {
 	<body>
 		{{{body}}}
 	</body>
-	<footer>
+	{{!-- <footer>
 		<p>Created by Team Table E2 at HackDavis 2020 in 24 hours.</p>
 		<p><a target="_blank" rel="noopener noreferrer" href="//github.com/table-e2/videosync">Repository</a></p>
-	</footer>
+	</footer> --}}
 </html>

@@ -8,7 +8,7 @@ const qrcode = require('qrcode')
 const app = express()
 var expressWs = require('express-ws')(app);
 const exphbs = require('express-handlebars');
-const port = 80
+const port = 3000
 const VideoSavePath = ''
 
 app.use(express.json());
@@ -20,17 +20,17 @@ app.use(bodyParser.urlencoded({
 app.engine('handlebars', exphbs())
 app.set('view engine', 'handlebars')
 
-var con = mysql.createConnection({
-    host: "35.225.82.255",
-    user: "root",
-    password: "",
-    database: 'Ocean'
-});
+// var con = mysql.createConnection({
+//     host: "35.225.82.255",
+//     user: "root",
+//     password: "",
+//     database: 'Ocean'
+// });
 
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected to DB!");
-});
+// con.connect(function(err) {
+//     if (err) throw err;
+//     console.log("Connected to DB!");
+// });
 
 // Homepage
 app.get('/', function(a_req, a_resp) {
@@ -145,7 +145,7 @@ app.ws('/faucet', function(a_ws, a_req) {
         let theseSockets = openSockets[msg.videoID];
         for (let socket of theseSockets) {
             if (socket === a_ws) {
-                console.log("Skipping host")
+                // console.log("Skipping host")
                 continue;
             }
             try {
