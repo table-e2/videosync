@@ -61,7 +61,7 @@ var storage = multer.diskStorage({
     filename: function(req, file, cb) {
         let splitted = file.originalname.split('.');
         let extension = splitted[splitted.length - 1];
-        cb(null, generateName(32) + '.' + extension);
+        cb(null, generateName(8) + '.' + extension);
     }
 });
 
@@ -81,41 +81,41 @@ var upload = multer({
 
 // returns accessToken
 app.post('/Upload', upload.single('file'), function(a_req, a_resp) {
-    let password = a_req.body.password;
+    // let password = a_req.body.password;
     let filename = a_req.file.filename;
-    var sqlQuery = `INSERT INTO atlantic (videoId, password) VALUES ( '${filename}', '${password}');`
-    con.query(sqlQuery, function(err, result) {})
+    // var sqlQuery = `INSERT INTO atlantic (videoId, password) VALUES ( '${filename}', '${password}');`
+    // con.query(sqlQuery, function(err, result) {})
     a_resp.redirect('/watch/' + filename);
 })
 
 // finished
 // request host access  
-app.post('/RequestWater', function(a_req, a_resp) {
-    console.log("Got request for host");
-    var videoID = a_req.body.videoID
-    var password = a_req.body.password
-    //console.log(a_req.);
+// app.post('/RequestWater', function(a_req, a_resp) {
+//     console.log("Got request for host");
+//     var videoID = a_req.body.videoID
+//     var password = a_req.body.password
+//     //console.log(a_req.);
 
-    var sqlQuery = `SELECT * FROM atlantic WHERE videoId = "${videoID}" AND password = "${password}";`
-    con.query(sqlQuery, function(err, result) {
-        if (err) throw err;
-        if (result.length > 0) {
-            var accessToken = Date.now().toString(16);
-            console.log(accessToken);
-            var sqlQuery = `INSERT INTO pacific (videoId, accessToken) VALUES ( '${videoID}', '${accessToken}');`
-            con.query(sqlQuery, function(err, result, fields) {
-                if (err) throw err;
-                console.log("made query")
-                a_resp.json({
-                    "token": accessToken
-                })
-                console.log("fields" + fields);
-            })
-        } else {
-            a_resp.status(403).end()
-        }
-    })
-})
+//     var sqlQuery = `SELECT * FROM atlantic WHERE videoId = "${videoID}" AND password = "${password}";`
+//     con.query(sqlQuery, function(err, result) {
+//         if (err) throw err;
+//         if (result.length > 0) {
+//             var accessToken = Date.now().toString(16);
+//             console.log(accessToken);
+//             var sqlQuery = `INSERT INTO pacific (videoId, accessToken) VALUES ( '${videoID}', '${accessToken}');`
+//             con.query(sqlQuery, function(err, result, fields) {
+//                 if (err) throw err;
+//                 console.log("made query")
+//                 a_resp.json({
+//                     "token": accessToken
+//                 })
+//                 console.log("fields" + fields);
+//             })
+//         } else {
+//             a_resp.status(403).end()
+//         }
+//     })
+// })
 
 var openSockets = {};
 

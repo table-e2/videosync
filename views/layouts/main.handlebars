@@ -211,12 +211,12 @@ function requestHost() {
 function upload() {
 	// Grab details from form
 	let file = id("video_file").files[0];
-	let password = id("password").innerText;
+	{{!-- let password = id("password").innerText; --}}
 	console.log(file.name);
 
 	let form = new FormData();
 	form.append("file", file);
-	form.append("password", password);
+	{{!-- form.append("password", password); --}}
 
 	let progress = id("progress");
 	let xhr = new XMLHttpRequest();
